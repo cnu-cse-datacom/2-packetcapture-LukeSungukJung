@@ -116,12 +116,12 @@ udp_data = recv_socket_2.recvfrom(65565)
 #parsing_udp_header(udp_data[0][34:44])
 
 def parsing_unknown(data):
-    parsing_ethernet_header(tcp_data[0][0:14])
-    tcp_udp=parsing_ip_header(tcp_data[0][14:34])
+    parsing_ethernet_header(data[0][0:14])
+    tcp_udp=parsing_ip_header(data[0][14:34])
     if str(tcp_udp) =="06":
-        parsing_tcp_header(tcp_data[0][34:54])
+        parsing_tcp_header(data[0][34:54])
     else:
-        parsing_udp_header(udp_data[0][34:44])
+        parsing_udp_header(data[0][34:44])
         
 parsing_unknown(tcp_data)       
 parsing_unknown(udp_data)
