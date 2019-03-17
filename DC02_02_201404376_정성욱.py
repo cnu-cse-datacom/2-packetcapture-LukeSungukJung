@@ -27,9 +27,6 @@ def convert_ethernet_address(data):
     return ethernet_addr
 
 
-
-
-
 def sixteen_to_ten(data):
     alist = list()
     for s in data:
@@ -62,6 +59,7 @@ def parsing_ip_header(data):
     dst_hex_list = convert_ip_address_list(network_header[12:16])
     print("source_ip_addreses: ",sixteen_to_ten(src_hex_list))
     print("destination_ip_addreses: ", sixteen_to_ten(dst_hex_list))
+    return network_header[6].hex()
 
 
 
@@ -81,8 +79,8 @@ def parsing_tcp_header(data):
 
     #leng_list = [transport_header[4].hex(), transport_header[5].hex()]
     print("=============tcp header==============")
-    print("src_port: ",sixteen_to_ten_to_int(dst_list))
-    print("dec_port: ",sixteen_to_ten_to_int(src_list))
+    print("src_port: ",sixteen_to_ten_to_int(src_list))
+    print("dec_port: ",sixteen_to_ten_to_int(dst_list))
     print("seq_num: ",seq)
     print("ack_num: ",ack)
     print("header_len: ",int(transport_header[12].hex()[0],16))
@@ -98,8 +96,8 @@ def parsing_udp_header(data):
     src_list = [transport_header[0].hex(), transport_header[1].hex()]
     dst_list = [transport_header[2].hex(), transport_header[3].hex()]
     print("=============udp header==============")
-    print("src_port: ",sixteen_to_ten_to_int(dst_list))
-    print("dec_port: ",sixteen_to_ten_to_int(src_list))
+    print("src_port: ",sixteen_to_ten_to_int(src_list))
+    print("dec_port: ",sixteen_to_ten_to_int(dst_list))
     print("length: ", int(sixteen_to_ten_to_int([d.hex() for d in transport_header[3:5]])))
     checksum = "".join([d.hex()for d in transport_header[5:7]])
     print("header checksum: ","0x"+checksum)
@@ -107,14 +105,25 @@ def parsing_udp_header(data):
 
 #Tcp
 #parsing_ethernet_header(tcp_data[0][0:14])
-#parsing_ip_header(tcp_data[0][14:34])
+#pc=parsing_ip_header(tcp_data[0][14:34])
 #parsing_tcp_header(tcp_data[0][34:54])
-
-
 
 recv_socket_2 = socket.socket(socket.AF_PACKET,socket.SOCK_RAW,socket.ntohs(0x0800))
 udp_data = recv_socket_2.recvfrom(65565)
 #UDP
-parsing_ethernet_header(udp_data[0][0:14])
-parsing_ip_header(udp_data[0][14:34])
-parsing_udp_header(udp_data[0][34:44])
+#parsing_ethernet_header(udp_data[0][0:14])
+#pc=parsing_ip_header(udp_data[0][14:34])
+#parsing_udp_header(udp_data[0][34:44])
+
+def parsing_unknown(data):
+    parsing_ethernet_header(tcp_data[0][0:14])
+    tcp_udp=parsing_ip_header(tcp_data[0][14:34])
+    if str(tcp_udp) =="06":
+        parsing_tcp_header(tcp_data[0][34:54])
+    else:
+        parsing_udp_header(udp_data[0][34:44])
+        
+parsing_unknown(tcp_data)       
+parsing_unknown(udp_data)
+    
+    
