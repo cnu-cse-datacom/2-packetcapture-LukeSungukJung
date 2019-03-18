@@ -104,17 +104,22 @@ def parsing_udp_header(data):
 
 
 #Tcp
-#parsing_ethernet_header(tcp_data[0][0:14])
-#pc=parsing_ip_header(tcp_data[0][14:34])
-#parsing_tcp_header(tcp_data[0][34:54])
+parsing_ethernet_header(tcp_data[0][0:14])
+pc=parsing_ip_header(tcp_data[0][14:34])
+parsing_tcp_header(tcp_data[0][34:54])
 
 recv_socket_2 = socket.socket(socket.AF_PACKET,socket.SOCK_RAW,socket.ntohs(0x0800))
 udp_data = recv_socket_2.recvfrom(65565)
 #UDP
-#parsing_ethernet_header(udp_data[0][0:14])
-#pc=parsing_ip_header(udp_data[0][14:34])
-#parsing_udp_header(udp_data[0][34:44])
+parsing_ethernet_header(udp_data[0][0:14])
+pc=parsing_ip_header(udp_data[0][14:34])
+parsing_udp_header(udp_data[0][34:44])
 
+
+#한번에 실행해서 출력하려했지만, 어떤 이유인지 protocol부분이 tcp나 udp가 같아버리는 버그가있습니다.
+#따로따로 위에 주석문 이후에 코드들을 한번씩 실행하는것이 버그가 없습니다.
+
+#incomplete! TT 
 def parsing_unknown(data):
     parsing_ethernet_header(data[0][0:14])
     tcp_udp=parsing_ip_header(data[0][14:34])
@@ -123,7 +128,7 @@ def parsing_unknown(data):
     else:
         parsing_udp_header(data[0][34:44])
         
-parsing_unknown(tcp_data)       
-parsing_unknown(udp_data)
+#parsing_unknown(tcp_data)       
+#parsing_unknown(udp_data)
     
     
